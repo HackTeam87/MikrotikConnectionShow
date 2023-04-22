@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+{% raw %}
+
+<div style="margin: 1% auto 1%;">
+<nav aria-label="breadcrumb">
+  <h6 class="badge rounded-pill  text-bg-light" v-if="my_ip">Мой IP: {{my_ip}}</h6>
+<ol class="breadcrumb">
+  <h6 class="badge rounded-pill  text-bg-light"><a href="/"><i class="fa-solid fa-arrow-left"></i></a></h6>
+  <li class="breadcrumb-item active" aria-current="page">
+    <h6 class="badge rounded-pill  text-bg-light" v-if="router_ip">{{identity}} {{router_ip}}</h6>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page">
+    <h6 class="badge rounded-pill  text-bg-light" v-if="test_ip">Ищем: {{test_ip}}</h6>
+    <h6 class="badge rounded-pill  text-bg-light">Примеры:<span style="font-size: smaller;color: lightgray;">(:1194 openvpn, :1701 vpn-l2tp, :1723 vpn-pptp, :4090 vpn-kerio)</span></h6>
+  </li>
+</ol>
+</nav>
+
+<div class="input-group mb-3 mx-auto">
+<input class="form-control" name="test_ip" id="myInput" type="text" placeholder="поиск.." v-model="test_ip">
+<select v-model="direction">
+<option value="src-address" selected>src-address</option>
+<option value="dst-address">dst-address</option>
+</select>
+<button class="btn btn-outline-secondary" type="button" @click="GetInfo(router_id,direction,test_ip)">Опросить</button>
+</div>
+
+
+
+
+</div>
+
+  <div id="test"  aria-labelledby="headingOne">
+    <div  style="max-height: 500px;  overflow-y:auto;">
+        <div class="card">
+            <div class="card-body" style="background-color: black;">
+              <div class="text-center" v-if="loading && direction ">
+                <div class="spinner-border text-light" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+              <pre v-html="base_list" style="color: white;">
+              </pre>
+            </div>
+          </div>
+    </div>
+  </div>
+
+
+
+
+
+
+{% endraw %}
+{% endblock %}

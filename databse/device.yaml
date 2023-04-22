@@ -1,0 +1,8 @@
+- device_type: mikrotik_routeros
+  host: 172.16.1.1
+  username: login
+  password: passwd
+  port: 22
+  verbose: True
+  session_log: netmiko_session.log
+  timeout: 10
