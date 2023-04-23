@@ -71,7 +71,7 @@ created() {
 methods: {
 async GetInfo(router_id,direction,test_ip) {
       this.loading = true
-      let one = 'http://185.253.216.14:8090/get-infos/'+ router_id + '/' + direction + '/' + test_ip
+      let one = 'http://mc.golden.net.ua/get-infos/'+ router_id + '/' + direction + '/' + test_ip
       const requestOne = axios.get(one);
       await axios.all([requestOne,]).then(axios.spread((...responses) => {
           const responseOne = responses[0]
@@ -105,12 +105,16 @@ async GetInfo(router_id,direction,test_ip) {
   a{
     text-decoration: none;
   }
+  .badge{transition: 0.3s;}
+  .badge:hover{
+   padding: 0.5%;
+  }
   .card{
     text-align: center;
     /* height: 7rem; */
   }
   img {
-    max-width: 15%;
+    max-width:20%;
     height: auto;
   }
   </style>

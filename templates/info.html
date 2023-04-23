@@ -18,15 +18,14 @@
 </nav>
 
 <div class="input-group mb-3 mx-auto">
-<input class="form-control" name="test_ip" id="myInput" type="text" placeholder="поиск.." v-model="test_ip">
+<input class="form-control" name="test_ip" id="myInput" type="text" 
+placeholder=":22 или 172.16.xx.xx или AA:BB:CC:DD:EE:FF" v-model="test_ip">
 <select v-model="direction">
 <option value="src-address" selected>src-address</option>
 <option value="dst-address">dst-address</option>
 </select>
-<button class="btn btn-outline-secondary" type="button" @click="GetInfo(router_id,direction,test_ip)">Опросить</button>
+<button class="btn btn-outline-primary" type="button" @click="GetInfo(router_id,direction,test_ip)" :disabled="test_ip == ''">Опросить</button>
 </div>
-
-
 
 
 </div>
@@ -46,10 +45,6 @@
           </div>
     </div>
   </div>
-
-
-
-
 
 
 {% endraw %}

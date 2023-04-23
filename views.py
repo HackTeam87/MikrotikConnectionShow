@@ -4,7 +4,17 @@ from app import app, db
 from flask import render_template, request, redirect, jsonify
 from ssh_test import Mikrotik
 from databse.models import MIKAUTH
+import re
+#регулярка нахождения MAC:
+#([0-9A-Fa-f]{2}[:]){5}[0-9A-Fa-f]{2}
 
+def is_mac_address(mac):
+    try:
+       mac = re.search("([0-9A-Fa-f]{2}[:]){5}[0-9A-Fa-f]{2}", mac).group()
+       return True
+    except Exception as err:
+       print(err)
+       return False
 
 @app.route("/")
 def index():
@@ -43,27 +53,56 @@ def info(id):
 @app.route("/get-infos/<int:router_id>/<string:direction>/<string:test_ip>")
 def get_infos(router_id, direction,test_ip):
     my_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+
+    
     
     device = MIKAUTH.query.filter(MIKAUTH.id == router_id).first()
     try:
         identity = Mikrotik().send_show_command(
         device.ip, device.login, device.passwd, 
         device.port, device.device_type, device.timeout,'system identity print')
+        
 
-        ma = Mikrotik().send_show_command(
-        device.ip, device.login, device.passwd, 
-        device.port, device.device_type, device.timeout,
-        f'ip firewall connection print without-paging  where {direction}~"{test_ip}"'
-        )
-       
-        return jsonify({
+        if is_mac_address(test_ip):
+          
+          ma1 = Mikrotik().send_show_command(
+          device.ip, device.login, device.passwd, 
+          device.port, device.device_type, device.timeout,
+          f':global FIP [/ip dhcp-server lease get [find where mac-address="{test_ip}"] address]')
+         
+
+          ma2 = Mikrotik().send_show_command(
+          device.ip, device.login, device.passwd, 
+          device.port, device.device_type, device.timeout,
+          f':put "$FIP"')
+         
+
+          ma3 = Mikrotik().send_show_command(
+          device.ip, device.login, device.passwd, 
+          device.port, device.device_type, device.timeout,
+          f'ip firewall connection print without-paging  where {direction}~"{ma2}"')
+
+          return jsonify({
             'my_ip': my_ip,
             'router_ip': device.ip, 
             'identity': identity.split(':')[1],
             'test_ip': test_ip,
-            'data': ma})
+            'data': ma3})
+
+        else:
+            ma4 = Mikrotik().send_show_command(
+            device.ip, device.login, device.passwd, 
+            device.port, device.device_type, device.timeout,
+            f'ip firewall connection print without-paging  where {direction}~"{test_ip}"')
+            
+            return jsonify({
+            'my_ip': my_ip,
+            'router_ip': device.ip, 
+            'identity': identity.split(':')[1],
+            'test_ip': test_ip,
+            'data': ma4})
     except:
-        return jsonify({'data': ma})
+        pass
             
              
 
